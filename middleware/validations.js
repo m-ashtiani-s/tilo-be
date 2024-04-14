@@ -1,8 +1,6 @@
 const { check } = require("express-validator");
 
 module.exports = {
-	
-
 	registerValidation: [
 		check("userName").notEmpty().withMessage("userName is required"),
 		check("email").notEmpty().withMessage("email is required").isEmail().withMessage("email format is not true"),
@@ -20,10 +18,6 @@ module.exports = {
 			.matches(/[!@#$%^&*(),.?":{}|<>]/)
 			.withMessage("password must contain special character"),
 	],
-loginValidation: [
-		check("personData").notEmpty().withMessage("email or userName is required"),
-		check("password")
-			.notEmpty()
-			.withMessage("password is required")
-	],
+	loginValidation: [check("personData").notEmpty().withMessage("email or userName is required"), check("password").notEmpty().withMessage("password is required")],
+	loginOtp: [check("otpPersonData").notEmpty().withMessage("email or userName is required")],
 };

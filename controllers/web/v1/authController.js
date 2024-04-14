@@ -130,4 +130,75 @@ module.exports = new (class AuthController extends Controller {
 			});
 		})(req, res, next);
 	}
+	loginWithOtp(req, res) {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return this.showValidationErrors(res, errors);
+		}
+
+		// Saving reference to 'this' to use inside LocalStrategy
+		const self = this;
+
+		//handle login with email or username (username dont have dot)
+		if (req.body.otpPersonData.includes(".")) {
+			this.model.userModel
+				.findOne({ email: req.body.otpPersonData })
+				.then((user) => {
+					if (!user) {
+						return res.status(400).json({ data: [{ fields: "user", message: "email not found!" }], success: false });
+					}
+
+					this.model.otpModel.findOne({ user: user._id }).then((otp) => {
+						if (otp) {
+							
+							return res.status(200).json({
+								message: "otp code is: 52526 email",
+								data: { otp: 52526 },
+								success: true,
+								error: false,
+							});
+						}
+					});
+					const otpCode = 52634;
+					const now = new Date();
+					const exCode= new Date(now.getTime() + 5 * 60000);
+					const newOtp=new this.model.otpModel({
+						code: otpCode,
+						expireTime: exCode,
+						userId: user._id,
+					});
+
+					newOtp.save()
+					return res.status(200).json({
+						message: "otp sent",
+						data: { otp: otpCode },
+						success: true,
+						error: false,
+					});
+				})
+				.catch((err) => {
+					return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
+				});
+		} else {
+			this.model.userModel
+				.findOne({ userName: req.body.otpPersonData })
+				.then((user) => {
+					if (!user) {
+						return res.status(400).json({ data: [{ fields: "user", message: "user not found!" }], success: false });
+					}
+
+					console.log(new Date(user.createdAt));
+
+					return res.status(200).json({
+						message: "otp code is: 52526 user",
+						data: { otp: 52526 },
+						success: true,
+						error: false,
+					});
+				})
+				.catch((err) => {
+					return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
+				});
+		}
+	}
 })();

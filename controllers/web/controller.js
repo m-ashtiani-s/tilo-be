@@ -1,9 +1,10 @@
+const otpModel = require("../../models/otpModel");
 const userModel = require("../../models/userModels");
 
 
 module.exports = class Controller {
 	constructor() {
-		this.model = { userModel };
+		this.model = { userModel,otpModel };
 	}
 
 	showValidationErrors(res,errors) {
