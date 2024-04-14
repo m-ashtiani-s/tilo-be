@@ -1,9 +1,9 @@
-const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+import express from "express";
+import cors from "cors";
+import cookieParser from "cookie-parser";
 require("dotenv").config();
-const webRouterRouter = require("./routes/api");
-const mongoose = require("mongoose");
+import webRouterRouter from "./routes/api";
+import mongoose from "mongoose";
 const app = require("express")();
 
 mongoose.connect("mongodb://127.0.0.1:27017/tilo-db");

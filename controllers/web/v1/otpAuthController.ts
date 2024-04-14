@@ -1,18 +1,15 @@
-const { validationResult } = require("express-validator");
-const Controller = require("../controller");
-const jwt = require("jsonwebtoken");
+import { validationResult } from "express-validator";
+import Controller from "../controller";
+import jwt from "jsonwebtoken";
+import {Request, Response} from 'express';
 
-module.exports = new (class otpAuthController extends Controller {
-	loginWithOtp(req, res) {
+
+export default class OtpAuthController extends Controller {
+	loginWithOtp(req:Request, res:Response) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
 		}
-
-		// Saving reference to 'this' to use inside LocalStrategy
-		const self = this;
-
-		//handle login with email or username (username dont have dot)
 		if (req.body.otpPersonData.includes(".")) {
 			this.model.userModel
 				.findOne({ email: req.body.otpPersonData })
@@ -128,7 +125,7 @@ module.exports = new (class otpAuthController extends Controller {
 		}
 	}
 
-	verifyOtp(req, res) {
+	verifyOtp(req:Request, res:Response) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);
@@ -150,6 +147,10 @@ module.exports = new (class otpAuthController extends Controller {
 
 						if (req.body.otp != otp.code) {
 							return res.status(400).json({ data: [{ fields: "otp", message: "otp code is false!" }], success: false });
+						}
+
+						if (!process.env.SECRET_KEY) {
+							throw new Error("SECRET_KEY is not defined in environment variables.");
 						}
 
 						const token = jwt.sign({ user_id: user._id }, process.env.SECRET_KEY, {
@@ -174,4 +175,4 @@ module.exports = new (class otpAuthController extends Controller {
 		} else {
 		}
 	}
-})();
+};

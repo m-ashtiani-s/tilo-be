@@ -1,6 +1,6 @@
-const { check } = require("express-validator");
+import { check } from "express-validator";
 
-module.exports = {
+export default {
 	registerValidation: [
 		check("userName").notEmpty().withMessage("userName is required"),
 		check("email").notEmpty().withMessage("email is required").isEmail().withMessage("email format is not true"),
