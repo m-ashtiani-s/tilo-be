@@ -91,7 +91,9 @@ module.exports = new (class AuthController extends Controller {
 									return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
 								}
 								if (!isMatch) {
-									return res.status(400).json({ data: [{ fields: "userName", message: "login data isn't correct" }], success: false });
+									return res
+										.status(400)
+										.json({ data: [{ fields: "userName", message: "login data isn't correct" }], success: false });
 								}
 								return done(null, user);
 							});
@@ -148,32 +150,46 @@ module.exports = new (class AuthController extends Controller {
 						return res.status(400).json({ data: [{ fields: "user", message: "email not found!" }], success: false });
 					}
 
-					this.model.otpModel.findOne({ user: user._id }).then((otp) => {
+					this.model.otpModel.findOne({ userId: user._id }).then((otp) => {
+						const otpCode = 52635; //TODO
+						const now = new Date();
+						const exCode = new Date(now.getTime() + 2 * 60000);
 						if (otp) {
-							
+							if (otp.expireTime > now) {
+								return res.status(500).json({
+									message: "otp sent in last 2 minute, please try again later",
+									data: null,
+									success: true,
+									error: false,
+								});
+							}
+
+							otp.updateOne({
+								code: otpCode,
+								expireTime: exCode,
+								userId: user._id,
+							});
 							return res.status(200).json({
-								message: "otp code is: 52526 email",
-								data: { otp: 52526 },
+								message: "otp code sent user",
+								data: { otp: otpCode },
 								success: true,
 								error: false,
 							});
 						}
-					});
-					const otpCode = 52634;
-					const now = new Date();
-					const exCode= new Date(now.getTime() + 5 * 60000);
-					const newOtp=new this.model.otpModel({
-						code: otpCode,
-						expireTime: exCode,
-						userId: user._id,
-					});
 
-					newOtp.save()
-					return res.status(200).json({
-						message: "otp sent",
-						data: { otp: otpCode },
-						success: true,
-						error: false,
+						const newOtp = new this.model.otpModel({
+							code: otpCode,
+							expireTime: exCode,
+							userId: user._id,
+						});
+
+						newOtp.save();
+						return res.status(200).json({
+							message: "otp code sent",
+							data: { otp: otpCode },
+							success: true,
+							error: false,
+						});
 					});
 				})
 				.catch((err) => {
@@ -184,16 +200,49 @@ module.exports = new (class AuthController extends Controller {
 				.findOne({ userName: req.body.otpPersonData })
 				.then((user) => {
 					if (!user) {
-						return res.status(400).json({ data: [{ fields: "user", message: "user not found!" }], success: false });
+						return res.status(400).json({ data: [{ fields: "user", message: "userName not found!" }], success: false });
 					}
 
-					console.log(new Date(user.createdAt));
+					this.model.otpModel.findOne({ userId: user._id }).then((otp) => {
+						const otpCode = 52635; //TODO
+						const now = new Date();
+						const exCode = new Date(now.getTime() + 2 * 60000);
+						if (otp) {
+							if (otp.expireTime > now) {
+								return res.status(500).json({
+									message: "otp sent in last 2 minute, please try again later",
+									data: null,
+									success: true,
+									error: false,
+								});
+							}
 
-					return res.status(200).json({
-						message: "otp code is: 52526 user",
-						data: { otp: 52526 },
-						success: true,
-						error: false,
+							otp.updateOne({
+								code: otpCode,
+								expireTime: exCode,
+								userId: user._id,
+							});
+							return res.status(200).json({
+								message: "otp code sent",
+								data: { otp: otpCode },
+								success: true,
+								error: false,
+							});
+						}
+
+						const newOtp = new this.model.otpModel({
+							code: otpCode,
+							expireTime: exCode,
+							userId: user._id,
+						});
+
+						newOtp.save();
+						return res.status(200).json({
+							message: "otp code sent",
+							data: { otp: otpCode },
+							success: true,
+							error: false,
+						});
 					});
 				})
 				.catch((err) => {

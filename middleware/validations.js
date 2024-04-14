@@ -20,4 +20,5 @@ module.exports = {
 	],
 	loginValidation: [check("personData").notEmpty().withMessage("email or userName is required"), check("password").notEmpty().withMessage("password is required")],
 	loginOtp: [check("otpPersonData").notEmpty().withMessage("email or userName is required")],
+	verifyOtp: [check("otpPersonData").notEmpty().withMessage("email or userName is required"),check("otp").notEmpty().withMessage("otp is required")],
 };

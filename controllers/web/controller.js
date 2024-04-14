@@ -1,13 +1,12 @@
 const otpModel = require("../../models/otpModel");
 const userModel = require("../../models/userModels");
 
-
 module.exports = class Controller {
 	constructor() {
-		this.model = { userModel,otpModel };
+		this.model = { userModel, otpModel };
 	}
 
-	showValidationErrors(res,errors) {
+	showValidationErrors(res, errors) {
 		if (!errors.isEmpty()) {
 			const errorArray = [];
 			for (const error of errors.errors) {
@@ -21,5 +20,9 @@ module.exports = class Controller {
 				success: false,
 			});
 		}
+	}
+
+	generateOtp() {
+		return Math.floor(Math.random() * 90000) + 10000;
 	}
 };
