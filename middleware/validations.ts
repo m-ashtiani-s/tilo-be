@@ -18,7 +18,22 @@ export default {
 			.matches(/[!@#$%^&*(),.?":{}|<>]/)
 			.withMessage("password must contain special character"),
 	],
-	loginValidation: [check("personData").notEmpty().withMessage("email or userName is required"), check("password").notEmpty().withMessage("password is required")],
+	loginValidation: [
+		check("personData").notEmpty().withMessage("email or userName is required"),
+		check("password").notEmpty().withMessage("password is required"),
+	],
 	loginOtp: [check("otpPersonData").notEmpty().withMessage("email or userName is required")],
-	verifyOtp: [check("otpPersonData").notEmpty().withMessage("email or userName is required"),check("otp").notEmpty().withMessage("otp is required")],
+	verifyOtp: [
+		check("otpPersonData").notEmpty().withMessage("email or userName is required"),
+		check("otp").notEmpty().withMessage("otp is required"),
+	],
+	createProduct: [
+		check("title").notEmpty().withMessage("tite is required"),
+		check("price").notEmpty().withMessage("price is required"),
+		check("shortInfo").notEmpty().withMessage("shortInfo is required"),
+		check("additionalInfo").notEmpty().withMessage("additionalInfo is required"),
+		check("measurement").notEmpty().withMessage("measurement is required"),
+	],
 };
+
+

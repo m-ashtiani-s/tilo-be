@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, PaginateResult } from "mongoose";
+import mongoose, { Document, Model, PaginateResult, Schema } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 import { FilterQuery, PaginateOptions } from 'mongoose';
@@ -25,9 +25,9 @@ export interface Product {
     shortInfo: string;
     additionalInfo: string;
     measurement: string;
-    colors: ColorProduct[];
-    tags: string[];
-    category: string[];
+    colors: ColorProduct[] | null;
+    tags: string[] | null;
+    category: string[] | null;
 }
 
 export interface ProductDocument extends Product, Document {}
@@ -47,7 +47,10 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
-        rate: Number,
+        rate: {
+            type: Number,
+            required: true,
+        },
         images: [String],
         price: {
             type: Number,
@@ -69,7 +72,7 @@ const productSchema = new mongoose.Schema(
         },
         colors: [],
         tags: [String],
-        category: [String],
+        category: [{type: Schema.Types.ObjectId,ref: 'categories'}],
     },
     { timestamps: true }
 );

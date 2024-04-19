@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import Controller from "../controller";
 
-export default class ProductController1 extends Controller {
+export default class ProductController extends Controller {
     
     getAll(req: Request, res: Response) {
         const errors = validationResult(req);
@@ -14,8 +14,16 @@ export default class ProductController1 extends Controller {
             limit: req.query.limit || 10,
             page: req.query.page || 1,
         };
-        const rate=5
-        const query = rate ? { rate: parseInt(rate.toString()) } : {};
+        const rateFilter=req.params.rate
+        const priceFilter=req.params.price
+        const discountFilter=req.params.discount
+        // const categoryFilter=req.params.category
+
+        const query:any={}
+        rateFilter ? query.rate:parseInt(rateFilter?.toString());
+        priceFilter ? query.price:parseInt(priceFilter?.toString());
+        discountFilter ? query.discount:parseInt(discountFilter?.toString());
+        // categoryFilter ? query.category:parseInt(categoryFilter?.toString());
 
         
         //@ts-ignore
