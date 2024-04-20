@@ -215,7 +215,9 @@ export default class AdminProductController extends Controller {
                                 } else {
                                     //@ts-ignore
                                     updatedProduct.category.push(cat);
-                                    catfound.products.push(req.params.id);
+									if (!catfound.products.includes(req.params.id)) {
+										catfound.products.push(req.params.id);
+									}
                                     catfound.save();
                                 }
                             })
