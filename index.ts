@@ -9,12 +9,12 @@ const app = require("express")();
 mongoose.connect("mongodb://127.0.0.1:27017/tilo-db");
 mongoose.Promise = global.Promise;
 
-// app.use(
-// 	cors({
-// 		origin: "http://localhost:3000",
-// 		// credentials: true,
-// 	})
-// );
+app.use(
+	cors({
+		origin: "http://localhost:3001",
+		// credentials: true,
+	})
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", webRouterRouter);

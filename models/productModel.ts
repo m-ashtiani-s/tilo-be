@@ -1,4 +1,4 @@
-import mongoose, { Document, Model, PaginateResult, Schema } from "mongoose";
+import mongoose, { Document, Model, ObjectId, PaginateResult, Schema } from "mongoose";
 import mongoosePaginate from 'mongoose-paginate-v2';
 
 import { FilterQuery, PaginateOptions } from 'mongoose';
@@ -27,7 +27,7 @@ export interface Product {
     measurement: string;
     colors: ColorProduct[] | null;
     tags: string[] | null;
-    category: string[] | null;
+    category: ObjectId[] ;
 }
 
 export interface ProductDocument extends Product, Document {}

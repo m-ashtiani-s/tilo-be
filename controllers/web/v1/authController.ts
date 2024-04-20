@@ -64,6 +64,7 @@ export default class AuthController extends Controller {
 							if (!user) {
 								return res.status(400).json({ data: [{ fields: "user", message: "login data isn't correct" }], success: false });
 							}
+							
 							compare(password, user.password, function (err, isMatch) {
 								if (err) {
 									return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
@@ -71,6 +72,7 @@ export default class AuthController extends Controller {
 								if (!isMatch) {
 									return res.status(400).json({ data: [{ fields: "user", message: "login data isn't correct" }], success: false });
 								}
+								
 								return done(null, user);
 							});
 						})
@@ -82,12 +84,14 @@ export default class AuthController extends Controller {
 		} else {
 			use(
 				new LocalStrategy({ usernameField: "personData" }, function (username, password, done) {
+					console.log('pp')
 					self.model.userModel
 						.findOne({ userName: username })
 						.then((user:UserDocument | null) => {
 							if (!user) {
 								return res.status(400).json({ data: [{ fields: "userName", message: "login data isn't correct" }], success: false });
 							}
+							console.log(user)
 							compare(password, user.password, function (err, isMatch) {
 								if (err) {
 									return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
@@ -97,6 +101,7 @@ export default class AuthController extends Controller {
 										.status(400)
 										.json({ data: [{ fields: "userName", message: "login data isn't correct" }], success: false });
 								}
+								
 								return done(null, user);
 							});
 						})
@@ -108,6 +113,7 @@ export default class AuthController extends Controller {
 		}
 
 		authenticate("local", function (err:Error, user:UserDocument) {
+			console.log('oo')
 			if (err) {
 				return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
 			}

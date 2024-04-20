@@ -34,7 +34,7 @@ export default class Controller {
         return Math.floor(Math.random() * 90000) + 10000;
     }
 
-     areArraysEqual(arr1:string[], arr2:string[]) {
+     areArraysEqual(arr1:ObjectId[], arr2:string[]) {
         if (arr1.length !== arr2.length) {
             return false;
         }
@@ -44,7 +44,7 @@ export default class Controller {
     
         // Compare the sorted arrays
         for (let i = 0; i < sortedArr1.length; i++) {
-            if (sortedArr1[i] !== sortedArr2[i]) {
+            if (sortedArr1[i].toString() !== sortedArr2[i]) {
                 return false;
             }
         }
