@@ -18,5 +18,6 @@ v1Router.post("/v1/login", validations.loginValidation, (authController as any).
 v1Router.post("/v1/login-with-otp", validations.loginOtp, (otpAuthController as any).loginWithOtp.bind(otpAuthController));
 v1Router.post("/v1/verify-with-otp", validations.verifyOtp, (otpAuthController as any).verifyOtp.bind(otpAuthController));
 v1Router.get("/v1/products",  productController1.getAll.bind(productController1));
+v1Router.get("/v1/products/by-category/:id",  productController1.getByCategory.bind(productController1));
 
 export default v1Router;
