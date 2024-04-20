@@ -96,7 +96,6 @@ export default class CategoryController extends Controller {
                         if (product) {
                             const categories = product.category;
                             const filteredCategories = categories?.filter((c) => {
-								console.log(category._id==c)
                                 return c.toString() != category._id.toString();
                             });
                             const newProduct = { ...product.toObject() };

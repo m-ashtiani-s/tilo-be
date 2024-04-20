@@ -2,7 +2,7 @@ import { validationResult } from "express-validator";
 import Controller from "../controller";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
-import { use, authenticate } from "passport";
+import passport, { use, authenticate } from "passport";
 import {Request, Response} from 'express';
 import { Strategy as LocalStrategy } from "passport-local";
 import { UserDocument } from "../../../models/userModels";
@@ -56,7 +56,7 @@ export default class AuthController extends Controller {
 
 		//handle login with email or username (username dont have dot)
 		if (req.body.personData.includes(".")) {
-			use(
+			passport.use(
 				new LocalStrategy({ usernameField: "personData" }, function (email, password, done) {
 					self.model.userModel
 						.findOne({ email: email })
@@ -82,16 +82,14 @@ export default class AuthController extends Controller {
 				})
 			);
 		} else {
-			use(
+			passport.use(
 				new LocalStrategy({ usernameField: "personData" }, function (username, password, done) {
-					console.log('pp')
 					self.model.userModel
 						.findOne({ userName: username })
 						.then((user:UserDocument | null) => {
 							if (!user) {
 								return res.status(400).json({ data: [{ fields: "userName", message: "login data isn't correct" }], success: false });
 							}
-							console.log(user)
 							compare(password, user.password, function (err, isMatch) {
 								if (err) {
 									return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
@@ -112,8 +110,7 @@ export default class AuthController extends Controller {
 			);
 		}
 
-		authenticate("local", function (err:Error, user:UserDocument) {
-			console.log('oo')
+		passport.authenticate("local", function (err:Error, user:UserDocument) {
 			if (err) {
 				return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
 			}
