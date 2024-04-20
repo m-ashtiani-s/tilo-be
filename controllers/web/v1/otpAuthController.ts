@@ -173,6 +173,46 @@ export default class OtpAuthController extends Controller {
 					return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
 				});
 		} else {
+			this.model.userModel
+				.findOne({ userName: req.body.otpPersonData })
+				.then((user) => {
+					if (!user) {
+						return res.status(400).json({ data: [{ fields: "user", message: "userName not found!" }], success: false });
+					}
+
+					this.model.otpModel.findOne({ userId: user._id }).then((otp) => {
+
+                        if (!otp) {
+                            return res.status(400).json({ data: [{ fields: "user", message: "otp dont sent to your email" }], success: false });
+                        }
+
+						if (req.body.otp != otp.code) {
+							return res.status(400).json({ data: [{ fields: "otp", message: "otp code is false!" }], success: false });
+						}
+
+						if (!process.env.SECRET_KEY) {
+							throw new Error("SECRET_KEY is not defined in environment variables.");
+						}
+
+						const token = jwt.sign({ user_id: user._id }, process.env.SECRET_KEY, {
+							expiresIn: "110h",
+						});
+
+						otp.deleteOne()
+							.then(() => {
+								return res.status(201).json({
+									data: { user, token },
+									success: true,
+								});
+							})
+							.catch((err) => {
+								return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
+							});
+					});
+				})
+				.catch((err) => {
+					return res.status(500).json({ data: [{ fields: "user", message: err.message }], success: false });
+				});
 		}
 	}
 };
