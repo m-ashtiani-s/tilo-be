@@ -28,6 +28,7 @@ export interface Product {
     colors: ColorProduct[] | null;
     tags: string[] | null;
     category: ObjectId[] ;
+    categoryNames: string[] ;
 }
 
 export interface ProductDocument extends Product, Document {}
@@ -73,6 +74,7 @@ const productSchema = new mongoose.Schema(
         colors: [],
         tags: [String],
         category: [{type: Schema.Types.ObjectId,ref: 'categories'}],
+        categoryNames: [String]
     },
     { timestamps: true }
 );

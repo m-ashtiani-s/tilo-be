@@ -119,7 +119,7 @@ export default class AuthController extends Controller {
 			}
 
 			const tokenData = {
-				_id: user._id,
+				user_id: user._id,
 				email: user.email,
 			};
 			if (!process.env.SECRET_KEY) {

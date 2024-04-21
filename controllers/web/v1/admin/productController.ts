@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import Controller from "../../controller";
 import { Request, Response } from "express";
 import { ObjectId } from "mongoose";
+import Transform from "../../../../transform/web/v1/transform";
 
 export default class AdminProductController extends Controller {
     create(req: Request, res: Response) {
@@ -32,6 +33,7 @@ export default class AdminProductController extends Controller {
                     colors: req.body.colors || null,
                     tags: req.body.tags || null,
                     category: productCategory,
+                    categoryNames: [],
                 });
 
                 if (productCategory.length > 0) {
@@ -45,6 +47,7 @@ export default class AdminProductController extends Controller {
                                 if (!categoryName) {
                                     errorCat = true;
                                 } else {
+                                    newProduct.categoryNames.push(categoryName.title);
                                     //@ts-ignore
                                     categoryName.products.push(newProduct._id);
                                     categoryName.save();
@@ -123,7 +126,7 @@ export default class AdminProductController extends Controller {
                 }
 
                 return res.json({
-                    data: [{ fields: "product", message: "successfully", data: products }],
+                    data: [{ fields: "product", message: "successfully", data: new Transform().products(products) }],
                     success: true,
                 });
             })
@@ -205,93 +208,85 @@ export default class AdminProductController extends Controller {
 
         this.model.productModel
             .findById(req.params.id)
-            .then((product) => {
+            .then(async (product) => {
                 if (!product) {
                     return res.status(400).json({ data: [{ fields: "product", message: "Product not found!" }], success: false });
                 }
 
-                const newCategories = req.body.category;
-                const checkCategories = this.areArraysEqual(product?.category, newCategories);
+                const newCategories = req.body.category || [];
+                let errorCat = false;
 
-                if (!!newCategories && newCategories.length > 0 && !checkCategories) {
-                    let updatedProduct = {
-                        title: req.body.title,
-                        images: req.body.images,
-                        price: req.body.price,
-                        discount: req.body.discount,
-                        discountExpire: req.body.discountExpire,
-                        shortInfo: req.body.shortInfo,
-                        additionalInfo: req.body.additionalInfo,
-                        measurement: req.body.measurement,
-                        colors: req.body.colors,
-                        tags: req.body.tags,
-                        category: [],
-                    };
-                    let promises: Promise<void>[] = [];
-                    let errorCat = false;
+                for (const cat of newCategories) {
+                    const catfound = await this.model.categoryModel.findById(cat);
+                    if (!catfound) {
+                        errorCat = true;
+                    }
+                }
 
-                    newCategories.map((cat: ObjectId) => {
+                if (!!product?.category && product?.category?.length > 0 && !errorCat) {
+                    for (const cat of product.category) {
+                        const catfound = await this.model.categoryModel.findById(cat);
+                        if (!catfound) {
+                            errorCat = true;
+                        } else {
+                            const productsInCategory = [...catfound.products];
+                            const newProducts = productsInCategory.filter((p: any) => p.toString() !== req.params.id);
+                            const newCat: any = { ...catfound.toObject() };
+                            newCat.products = newProducts;
+                            await catfound.updateOne(newCat);
+                        }
+                    }
+                }
+
+                let updatedProduct: any = {
+                    title: req.body.title,
+                    images: req.body.images,
+                    price: req.body.price,
+                    discount: req.body.discount,
+                    discountExpire: req.body.discountExpire,
+                    shortInfo: req.body.shortInfo,
+                    additionalInfo: req.body.additionalInfo,
+                    measurement: req.body.measurement,
+                    colors: req.body.colors,
+                    tags: req.body.tags,
+                    category: [],
+                    categoryNames: [],
+                };
+
+                let promises: Promise<void>[] = [];
+
+                if (!errorCat) {
+                    for (const cat of newCategories) {
                         promises.push(
-                            this.model.categoryModel.findById(cat).then((catfound: any) => {
-                                if (!catfound) {
-                                    errorCat = true;
-                                } else {
-                                    //@ts-ignore
-                                    updatedProduct.category.push(cat);
+                            this.model.categoryModel.findById(cat).then(async (catfound: any) => {
+                                if (catfound && !errorCat) {
+                                    updatedProduct.categoryNames.push(catfound?.title);
+                                    updatedProduct.category.push(catfound?._id);
                                     if (!catfound.products.includes(req.params.id)) {
                                         catfound.products.push(req.params.id);
                                     }
-                                    catfound.save();
+                                    await catfound.save();
                                 }
                             })
                         );
-                    });
+                    }
+                }
 
-                    Promise.all(promises)
-                        .then(() => {
-                            if (errorCat) {
-                                return res.status(400).json({ data: [{ fields: "category", message: "Category not found!" }], success: false });
-                            } else {
-                                this.model.productModel
-                                    .findOneAndUpdate({ _id: req.params.id }, updatedProduct)
-                                    .then(() => {
-                                        res.json({
-                                            data: [{ fields: "product", message: "Product edited successfully" }],
-                                            success: true,
-                                        });
-                                    })
-                                    .catch((err) => {
-                                        res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });
-                                    });
-                            }
-                        })
-                        .catch((err) => {
-                            res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });
-                        });
+                await Promise.all(promises);
+
+                if (errorCat) {
+                    return res.status(400).json({ data: [{ fields: "category", message: "Category not found!" }], success: false });
                 } else {
-                    let updatedProduct = {
-                        title: req.body.title,
-                        images: req.body.images,
-                        price: req.body.price,
-                        discount: req.body.discount,
-                        discountExpire: req.body.discountExpire,
-                        shortInfo: req.body.shortInfo,
-                        additionalInfo: req.body.additionalInfo,
-                        measurement: req.body.measurement,
-                        colors: req.body.colors,
-                        tags: req.body.tags,
-                    };
-
                     this.model.productModel
                         .findOneAndUpdate({ _id: req.params.id }, updatedProduct)
                         .then(() => {
-                            return res.json({
+                            res.json({
                                 data: [{ fields: "product", message: "Product edited successfully" }],
                                 success: true,
                             });
                         })
                         .catch((err) => {
-                            return res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });
+                            res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });
                         });
                 }
             })

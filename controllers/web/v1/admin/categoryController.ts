@@ -95,11 +95,16 @@ export default class CategoryController extends Controller {
                     return this.model.productModel.findById(p).then((product) => {
                         if (product) {
                             const categories = product.category;
+                            const categoryNames = product.categoryNames;
                             const filteredCategories = categories?.filter((c) => {
                                 return c.toString() != category._id.toString();
                             });
+                            const filteredCategoryNames = categoryNames?.filter((c) => {
+                                return c != category.title;
+                            });
                             const newProduct = { ...product.toObject() };
                             newProduct.category = filteredCategories;
+                            newProduct.categoryNames= filteredCategoryNames;
                             return product.updateOne(newProduct);
                         }
                     });
