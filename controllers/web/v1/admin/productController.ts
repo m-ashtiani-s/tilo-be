@@ -35,28 +35,39 @@ export default class AdminProductController extends Controller {
                 });
 
                 if (productCategory.length > 0) {
-                    const promises = productCategory.map((categoryId: ObjectId) => {
-                        return this.model.categoryModel.findById(categoryId).then((categoryName) => {
-                            if (!categoryName) {
-                                return res.status(400).json({
-                                    data: [{ fields: "product", message: "category is not existed" }],
-                                    success: false,
-                                });
-                            }
+                    let promises: Promise<void>[] = [];
+                    let errorCat = false;
+
+                    productCategory.map((categoryId: ObjectId) => {
+                        promises.push(
                             //@ts-ignore
-                            categoryName.products.push(newProduct._id);
-                            categoryName.save();
-                        });
+                            this.model.categoryModel.findById(categoryId).then((categoryName) => {
+                                if (!categoryName) {
+                                    errorCat = true;
+                                } else {
+                                    //@ts-ignore
+                                    categoryName.products.push(newProduct._id);
+                                    categoryName.save();
+                                }
+                            })
+                        );
                     });
 
                     Promise.all(promises)
                         .then(() => {
-                            return newProduct.save().then(() => {
-                                return res.json({
-                                    data: [{ fields: "product", message: "product created successfully" }],
-                                    success: true,
+                            if (errorCat) {
+                                return res.status(400).json({
+                                    data: [{ fields: "product", message: "category is not existed" }],
+                                    success: false,
                                 });
-                            });
+                            } else {
+                                newProduct.save().then(() => {
+                                    return res.json({
+                                        data: [{ fields: "product", message: "product created successfully" }],
+                                        success: true,
+                                    });
+                                });
+                            }
                         })
                         .catch((err) => {
                             return res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });

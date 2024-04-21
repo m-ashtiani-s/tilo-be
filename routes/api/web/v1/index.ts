@@ -4,6 +4,8 @@ import AuthController from "../../../../controllers/web/v1/authController";
 import OtpAuthController from "../../../../controllers/web/v1/otpAuthController";
 import ProductController from "../../../../controllers/web/v1/productController";
 import adminRouter from "./admin";
+import AuthHandler from "../../../../middleware/authHandler";
+import AdminAuthHandler from "../../../../middleware/adminAuthHandler";
 
 const v1Router = express.Router();
 
@@ -11,7 +13,7 @@ const authController = new AuthController();
 const otpAuthController = new OtpAuthController();
 const productController1 = new ProductController();
 
-v1Router.use("/v1/admin", adminRouter);
+v1Router.use("/v1/admin",AuthHandler,AdminAuthHandler, adminRouter);
 
 //auth routs
 v1Router.post("/v1/register", validations.registerValidation, authController.register.bind(authController));

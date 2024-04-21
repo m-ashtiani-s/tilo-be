@@ -134,7 +134,7 @@ export default class AuthController extends Controller {
 			res.cookie("token", token, tokenOption);
 			return res.status(200).json({
 				message: "Login successfully",
-				data: { user },
+				data: { user,token },
 				success: true,
 				error: false,
 			});
