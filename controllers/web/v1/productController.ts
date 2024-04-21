@@ -80,7 +80,7 @@ export default class ProductController extends Controller {
 
         const categoryId = req.params.id;
         const page = req.query.page ? parseInt(req.query.page as string) : 1;
-        const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+        const limit = req.query.pageSize ? parseInt(req.query.pageSize as string) : 10;
 
         this.model.categoryModel
             .findById(categoryId)

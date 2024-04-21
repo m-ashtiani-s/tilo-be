@@ -90,10 +90,22 @@ export default class AdminProductController extends Controller {
             limit: req.query.limit || 10,
             page: req.query.page || 1,
         };
+        const { minPrice, maxPrice } = req.query;
+
+        const query: any = {};
+
+        if (minPrice !== undefined && maxPrice !== undefined) {
+            query.price = { $gte: minPrice, $lte: maxPrice };
+        } else if (minPrice !== undefined) {
+            query.price = { $gte: minPrice };
+        } else if (maxPrice !== undefined) {
+            query.price = { $lte: maxPrice };
+        }
+
         //@ts-ignore
         this.model.productModel
             //@ts-ignore
-            .paginate({}, { limit: paginationSetup.limit, page: paginationSetup.page })
+            .paginate(query, paginationSetup)
             .then((products: any) => {
                 if (!products) {
                     return res.status(400).json({ data: [{ fields: "product", message: "no products" }], success: false });
@@ -215,9 +227,9 @@ export default class AdminProductController extends Controller {
                                 } else {
                                     //@ts-ignore
                                     updatedProduct.category.push(cat);
-									if (!catfound.products.includes(req.params.id)) {
-										catfound.products.push(req.params.id);
-									}
+                                    if (!catfound.products.includes(req.params.id)) {
+                                        catfound.products.push(req.params.id);
+                                    }
                                     catfound.save();
                                 }
                             })

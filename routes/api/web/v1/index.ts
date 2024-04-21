@@ -11,13 +11,16 @@ const authController = new AuthController();
 const otpAuthController = new OtpAuthController();
 const productController1 = new ProductController();
 
-v1Router.use('/v1/admin',adminRouter)
+v1Router.use("/v1/admin", adminRouter);
 
+//auth routs
 v1Router.post("/v1/register", validations.registerValidation, authController.register.bind(authController));
 v1Router.post("/v1/login", validations.loginValidation, (authController as any).login.bind(authController));
 v1Router.post("/v1/login-with-otp", validations.loginOtp, (otpAuthController as any).loginWithOtp.bind(otpAuthController));
 v1Router.post("/v1/verify-with-otp", validations.verifyOtp, (otpAuthController as any).verifyOtp.bind(otpAuthController));
-v1Router.get("/v1/products",  productController1.getAll.bind(productController1));
-v1Router.get("/v1/products/by-category/:id",  productController1.getByCategory.bind(productController1));
+
+//products routs
+v1Router.get("/v1/products", validations.getAllProducts, productController1.getAll.bind(productController1));
+v1Router.get("/v1/products/by-category/:id", validations.getProductsByCategory, productController1.getByCategory.bind(productController1));
 
 export default v1Router;
