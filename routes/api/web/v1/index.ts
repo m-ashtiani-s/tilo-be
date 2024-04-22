@@ -23,6 +23,7 @@ v1Router.post("/v1/verify-with-otp", validations.verifyOtp, (otpAuthController a
 
 //products routs
 v1Router.get("/v1/products", validations.getAllProducts, productController1.getAll.bind(productController1));
+v1Router.get("/v1/products/:id", validations.getAllProducts, productController1.get.bind(productController1));
 v1Router.get("/v1/products/by-category/:id", validations.getProductsByCategory, productController1.getByCategory.bind(productController1));
 
 export default v1Router;

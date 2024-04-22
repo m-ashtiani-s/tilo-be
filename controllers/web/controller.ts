@@ -25,8 +25,10 @@ export default class Controller {
         }));
 
         return res.status(500).json({
-            data: errorArray,
+            fields: "validation",
             success: false,
+            data: null,
+            message: errorArray,
         });
     }
 

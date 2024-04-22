@@ -24,6 +24,7 @@ export default class AdminProductController extends Controller {
                     rate: 5,
                     numbersOfRate: 1,
                     images: req.body.images,
+                    featuredImage: req.body.featuredImage,
                     price: req.body.price,
                     priceWithDiscount: req.body.priceWithDiscount,
                     discount: req.body.discount || null,
@@ -123,16 +124,16 @@ export default class AdminProductController extends Controller {
             .paginate(query, paginationSetup)
             .then((products: any) => {
                 if (!products) {
-                    return res.status(400).json({ data: [{ fields: "product", message: "no products" }], success: false });
+                    return res.status(400).json({ data: { fields: "product", message: "no products" }, success: false });
                 }
 
                 return res.json({
-                    data: [{ fields: "product", message: "successfully", data: new Transform().products(products) }],
+                    data: { fields: "product", message: "successfully", data: new Transform().products(products) },
                     success: true,
                 });
             })
             .catch((err: Error) => {
-                return res.status(500).json({ data: [{ fields: "product", message: err.message }], success: false });
+                return res.status(500).json({ data: { fields: "product", message: err.message }, success: false });
             });
     }
     get(req: Request, res: Response) {
@@ -242,6 +243,7 @@ export default class AdminProductController extends Controller {
                 let updatedProduct: any = {
                     title: req.body.title,
                     images: req.body.images,
+                    featuredImage: req.body.featuredImage,
                     price: req.body.price,
                     priceWithDiscount: req.body.priceWithDiscount,
                     discount: req.body.discount,
