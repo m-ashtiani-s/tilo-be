@@ -13,6 +13,7 @@ export default class ProductController extends Controller {
         const paginationSetup = {
             limit: req.query.limit || 10,
             page: req.query.page || 1,
+            sort: { createdAt: -1 }
         };
         const rateFilter = req.params.rate;
         const { minPrice, maxPrice } = req.query;
