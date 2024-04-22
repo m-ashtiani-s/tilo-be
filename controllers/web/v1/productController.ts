@@ -20,11 +20,11 @@ export default class ProductController extends Controller {
 		rateFilter && (query.rate = rateFilter);
 
 		if (minPrice !== undefined && maxPrice !== undefined) {
-			query.price = { $gte: minPrice, $lte: maxPrice };
+			query.priceWithDiscount = { $gte: minPrice, $lte: maxPrice };
 		} else if (minPrice !== undefined) {
-			query.price = { $gte: minPrice };
+			query.priceWithDiscount = { $gte: minPrice };
 		} else if (maxPrice !== undefined) {
-			query.price = { $lte: maxPrice };
+			query.priceWithDiscount = { $lte: maxPrice };
 		}
 
 		//@ts-ignore

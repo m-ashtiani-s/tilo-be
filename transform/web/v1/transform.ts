@@ -29,6 +29,7 @@ export default class Transform {
                 rate: item.rate,
                 images: item.images,
                 price: item.price,
+                priceWithDiscount: item.priceWithDiscount,
                 discount: item.discount,
                 discountExpire: item.discountExpire,
                 shortInfo: item.shortInfo,

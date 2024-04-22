@@ -20,6 +20,7 @@ export interface Product {
     numbersOfRate: Number,
     images: string[] | null;
     price: number;
+    priceWithDiscount: number;
     discount: number | null;
     discountExpire: Date | null;
     shortInfo: string;
@@ -54,6 +55,10 @@ const productSchema = new mongoose.Schema(
         },
         images: [String],
         price: {
+            type: Number,
+            required: true,
+        },
+        priceWithDiscount: {
             type: Number,
             required: true,
         },

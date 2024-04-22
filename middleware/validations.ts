@@ -27,6 +27,7 @@ export default {
     createProduct: [
         check("title").notEmpty().withMessage("tite is required"),
         check("price").notEmpty().withMessage("price is required"),
+        check("priceWithDiscount").notEmpty().withMessage("priceWithDiscount is required"),
         check("shortInfo").notEmpty().withMessage("shortInfo is required"),
         check("additionalInfo").notEmpty().withMessage("additionalInfo is required"),
         check("measurement").notEmpty().withMessage("measurement is required"),
@@ -45,6 +46,7 @@ export default {
     editProduct: [
         check("title").notEmpty().withMessage("tite is required"),
         check("price").notEmpty().withMessage("price is required"),
+        check("priceWithDiscount").notEmpty().withMessage("priceWithDiscount is required"),
         check("shortInfo").notEmpty().withMessage("shortInfo is required"),
         check("additionalInfo").notEmpty().withMessage("additionalInfo is required"),
         check("measurement").notEmpty().withMessage("measurement is required"),

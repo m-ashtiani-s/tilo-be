@@ -25,6 +25,7 @@ export default class AdminProductController extends Controller {
                     numbersOfRate: 1,
                     images: req.body.images,
                     price: req.body.price,
+                    priceWithDiscount: req.body.priceWithDiscount,
                     discount: req.body.discount || null,
                     discountExpire: req.body.discountExpire || null,
                     shortInfo: req.body.shortInfo,
@@ -109,11 +110,11 @@ export default class AdminProductController extends Controller {
         const query: any = {};
 
         if (minPrice !== undefined && maxPrice !== undefined) {
-            query.price = { $gte: minPrice, $lte: maxPrice };
+            query.priceWithDiscount = { $gte: minPrice, $lte: maxPrice };
         } else if (minPrice !== undefined) {
-            query.price = { $gte: minPrice };
+            query.priceWithDiscount = { $gte: minPrice };
         } else if (maxPrice !== undefined) {
-            query.price = { $lte: maxPrice };
+            query.priceWithDiscount = { $lte: maxPrice };
         }
 
         //@ts-ignore
@@ -242,6 +243,7 @@ export default class AdminProductController extends Controller {
                     title: req.body.title,
                     images: req.body.images,
                     price: req.body.price,
+                    priceWithDiscount: req.body.priceWithDiscount,
                     discount: req.body.discount,
                     discountExpire: req.body.discountExpire,
                     shortInfo: req.body.shortInfo,
