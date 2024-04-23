@@ -13,9 +13,9 @@ const v1Router = express.Router();
 const authController = new AuthController();
 const otpAuthController = new OtpAuthController();
 const productController1 = new ProductController();
-const likeController = new LikeController();
+const likeController= new LikeController()
 
-v1Router.use("/v1/admin", adminRouter);
+v1Router.use("/v1/admin",AuthHandler,AdminAuthHandler, adminRouter);
 
 //auth routs
 v1Router.post("/v1/register", validations.registerValidation, authController.register.bind(authController));
@@ -28,8 +28,7 @@ v1Router.get("/v1/products", validations.getAllProducts, productController1.getA
 v1Router.get("/v1/products/:id", validations.getAllProducts, productController1.get.bind(productController1));
 v1Router.get("/v1/products/by-category/:id", validations.getProductsByCategory, productController1.getByCategory.bind(productController1));
 
-//like routs
-v1Router.post("/v1/like",AuthHandler, likeController.create.bind(likeController));
-v1Router.get("/v1/liked-products",AuthHandler, likeController.get.bind(likeController));
+v1Router.post("/v1/like",AuthHandler,  likeController.create.bind(likeController));
+v1Router.get("/v1/liked-products",AuthHandler,  likeController.get.bind(likeController));
 
 export default v1Router;
