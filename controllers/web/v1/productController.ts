@@ -44,7 +44,7 @@ export default class ProductController extends Controller {
                 return res.json({
 					fields: "product",
 					success: true,
-					data: new Transform().products(products),
+					data: new Transform().paginatedProducts(products),
 					message: "successfully",
 				});
             })

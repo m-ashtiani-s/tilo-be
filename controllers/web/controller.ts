@@ -5,18 +5,20 @@ import { Response } from 'express';
 import { Model, ObjectId } from "mongoose";
 import productModel, { ProductDocument, ProductDocumentWithPaginate }  from "../../models/productModel";
 import categoryModel,{ CategoryDocumentWithPaginate } from "../../models/categoryModel";
+import likeModel,{ LikeDocument } from "../../models/likeModel";
 
 interface Models {
     userModel: Model<UserDocument>;
     otpModel: Model<OTPDocument>;
     productModel: Model<ProductDocumentWithPaginate>;
     categoryModel: Model<CategoryDocumentWithPaginate>;
+    likeModel: Model<LikeDocument>;
 }
 
 export default class Controller {
     model: Models;
     constructor() { 
-        this.model = { userModel, otpModel,productModel,categoryModel };
+        this.model = { userModel, otpModel,productModel,categoryModel,likeModel };
     }
     showValidationErrors(res: Response, errors: Result<ValidationError>) {
         const errorArray = errors.array().map(error => ({

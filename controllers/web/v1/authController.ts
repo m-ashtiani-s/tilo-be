@@ -33,7 +33,12 @@ export default class AuthController extends Controller {
 							password: req.body.password,
 						});
 
+						const likeModel=new this.model.likeModel({
+							user: newUser._id
+						})
+
 						newUser.save();
+						likeModel.save();
 						res.json({ data: [{ fields: "user", message: "user created successfully" }], success: true });
 					})
 					.catch((err:Error) => {

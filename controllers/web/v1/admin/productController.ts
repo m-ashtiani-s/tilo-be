@@ -1,8 +1,9 @@
 import { validationResult } from "express-validator";
 import Controller from "../../controller";
 import { Request, Response } from "express";
-import { ObjectId } from "mongoose";
+// import { ObjectId } from "mongoose";
 import Transform from "../../../../transform/web/v1/transform";
+import { ObjectId } from "mongodb";
 
 export default class AdminProductController extends Controller {
     create(req: Request, res: Response) {
@@ -128,7 +129,7 @@ export default class AdminProductController extends Controller {
                 }
 
                 return res.json({
-                    data: { fields: "product", message: "successfully", data: new Transform().products(products) },
+                    data: { fields: "product", message: "successfully", data: new Transform().paginatedProducts(products) },
                     success: true,
                 });
             })
@@ -159,7 +160,7 @@ export default class AdminProductController extends Controller {
             });
     }
 
-    delete(req: Request, res: Response) {
+    async delete(req: Request, res: Response) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return this.showValidationErrors(res as Response, errors);
@@ -167,11 +168,26 @@ export default class AdminProductController extends Controller {
 
         this.model.productModel
             .findByIdAndDelete(req.params.id)
-            .then((product) => {
+            .then(async (product) => {
                 if (!product) {
                     return res.status(400).json({ data: [{ fields: "product", message: "product not found!" }], success: false });
                 }
 
+                const liked = await this.model.likeModel.findOne({
+                    products: {
+                        $elemMatch: {
+                            $eq: req.params.id,
+                        },
+                    },
+                });
+
+                if (liked) {
+                    const index = liked?.products?.indexOf(req.params.id);
+                    if (index > -1) {
+                        liked?.products.splice(index, 1);
+                        liked.save();
+                    }
+                }
                 if (!!product.category && product?.category?.length > 0) {
                     product.category.map((category) => {
                         this.model.categoryModel.findById(category).then((categoryFound) => {
