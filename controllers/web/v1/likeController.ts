@@ -57,7 +57,7 @@ export default class LikeController extends Controller {
             likes?.products.push(req.body.productId);
             productLiked.save()
             likes?.save();
-            return res.status(400).json({
+            return res.status(200).json({
                 fields: "likes",
                 success: true,
                 data: null,
@@ -83,7 +83,7 @@ export default class LikeController extends Controller {
             });
         }
 
-        return res.status(400).json({
+        return res.status(200).json({
             fields: "likes",
             success: true,
             data: new Transform().products(liked?.products),

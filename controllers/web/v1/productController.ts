@@ -13,7 +13,7 @@ export default class ProductController extends Controller {
         const paginationSetup = {
             limit: req.query.limit || 10,
             page: req.query.page || 1,
-            sort: { createdAt: -1 }
+            sort: { createdAt: -1 },
         };
         const rateFilter = req.params.rate;
         const { minPrice, maxPrice } = req.query;
@@ -43,19 +43,19 @@ export default class ProductController extends Controller {
                     });
                 }
                 return res.json({
-					fields: "product",
-					success: true,
-					data: new Transform().paginatedProducts(products),
-					message: "successfully",
-				});
+                    fields: "product",
+                    success: true,
+                    data: new Transform().paginatedProducts(products),
+                    message: "successfully",
+                });
             })
             .catch((err: Error) => {
                 return res.status(500).json({
-					fields: "product",
-					success: false,
-					data: null,
-					message: err.message,
-				});
+                    fields: "product",
+                    success: false,
+                    data: null,
+                    message: err.message,
+                });
             });
     }
     get(req: Request, res: Response) {
@@ -85,11 +85,11 @@ export default class ProductController extends Controller {
             })
             .catch((err: Error) => {
                 return res.status(500).json({
-					fields: "product",
-					success: false,
-					data: null,
-					message: err.message,
-				});
+                    fields: "product",
+                    success: false,
+                    data: null,
+                    message: err.message,
+                });
             });
     }
     //TODO pagination format
@@ -124,19 +124,19 @@ export default class ProductController extends Controller {
                 }
                 const products = category.products;
                 return res.json({
-					fields: "product",
-					success: false,
-					data: products,
-					message: "successfully",
-				});
+                    fields: "product",
+                    success: false,
+                    data: products,
+                    message: "successfully",
+                });
             })
             .catch((err) => {
                 return res.status(500).json({
-					fields: "product",
-					success: false,
-					data: null,
-					message: err.message,
-				});
+                    fields: "product",
+                    success: false,
+                    data: null,
+                    message: err.message,
+                });
             });
     }
 }
