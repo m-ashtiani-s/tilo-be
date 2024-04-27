@@ -36,9 +36,16 @@ export default class AuthController extends Controller {
 						const likeModel=new this.model.likeModel({
 							user: newUser._id
 						})
+						const cartModel=new this.model.cartModel({
+							user: newUser._id,
+							products:[],
+							cartSum:0,
+							cartSumWithDiscount:0
+						})
 
 						newUser.save();
 						likeModel.save();
+						cartModel.save();
 						res.json({ data: [{ fields: "user", message: "user created successfully" }], success: true });
 					})
 					.catch((err:Error) => {

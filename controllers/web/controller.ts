@@ -1,11 +1,12 @@
 import { Result, ValidationError } from "express-validator";
 import otpModel, { OTP, OTPDocument } from "../../models/otpModel";
 import userModel, { User, UserDocument } from "../../models/userModels";
-import { Response } from 'express';
+import { Response } from "express";
 import { Model, ObjectId } from "mongoose";
-import productModel, { ProductDocument, ProductDocumentWithPaginate }  from "../../models/productModel";
-import categoryModel,{ CategoryDocumentWithPaginate } from "../../models/categoryModel";
-import likeModel,{ LikeDocument } from "../../models/likeModel";
+import productModel, { ProductDocument, ProductDocumentWithPaginate } from "../../models/productModel";
+import categoryModel, { CategoryDocumentWithPaginate } from "../../models/categoryModel";
+import likeModel, { LikeDocument } from "../../models/likeModel";
+import cartModel, { CartDocument } from "../../models/cartModel";
 
 interface Models {
     userModel: Model<UserDocument>;
@@ -13,16 +14,17 @@ interface Models {
     productModel: Model<ProductDocumentWithPaginate>;
     categoryModel: Model<CategoryDocumentWithPaginate>;
     likeModel: Model<LikeDocument>;
+    cartModel: Model<CartDocument>;
 }
 
 export default class Controller {
     model: Models;
-    constructor() { 
-        this.model = { userModel, otpModel,productModel,categoryModel,likeModel };
+    constructor() {
+        this.model = { userModel, otpModel, productModel, categoryModel, likeModel, cartModel };
     }
     showValidationErrors(res: Response, errors: Result<ValidationError>) {
-        const errorArray = errors.array().map(error => ({
-            field: 'err',
+        const errorArray = errors.array().map((error) => ({
+            field: "err",
             message: error.msg,
         }));
 
@@ -38,21 +40,21 @@ export default class Controller {
         return Math.floor(Math.random() * 90000) + 10000;
     }
 
-     areArraysEqual(arr1:ObjectId[], arr2:string[]) {
+    areArraysEqual(arr1: ObjectId[], arr2: string[]) {
         if (arr1.length !== arr2.length) {
             return false;
         }
-    
+
         const sortedArr1 = arr1.slice().sort();
         const sortedArr2 = arr2.slice().sort();
-    
+
         // Compare the sorted arrays
         for (let i = 0; i < sortedArr1.length; i++) {
             if (sortedArr1[i].toString() !== sortedArr2[i]) {
                 return false;
             }
         }
-    
+
         return true;
     }
-};
+}

@@ -7,6 +7,7 @@ import adminRouter from "./admin";
 import AuthHandler from "../../../../middleware/authHandler";
 import AdminAuthHandler from "../../../../middleware/adminAuthHandler";
 import LikeController from "../../../../controllers/web/v1/likeController";
+import CartController from "../../../../controllers/web/v1/cartController";
 
 const v1Router = express.Router();
 
@@ -14,6 +15,7 @@ const authController = new AuthController();
 const otpAuthController = new OtpAuthController();
 const productController1 = new ProductController();
 const likeController= new LikeController()
+const cartController= new CartController()
 
 v1Router.use("/v1/admin",AuthHandler,AdminAuthHandler, adminRouter);
 
@@ -30,5 +32,9 @@ v1Router.get("/v1/products/by-category/:id", validations.getProductsByCategory, 
 
 v1Router.post("/v1/like",AuthHandler,  likeController.create.bind(likeController));
 v1Router.get("/v1/liked-products",AuthHandler,  likeController.get.bind(likeController));
+
+v1Router.post("/v1/cart",AuthHandler,  cartController.create.bind(cartController));
+v1Router.get("/v1/cart",AuthHandler,  cartController.get.bind(cartController));
+v1Router.delete("/v1/cart/:cart/:product",AuthHandler, cartController.delete.bind(cartController));
 
 export default v1Router;

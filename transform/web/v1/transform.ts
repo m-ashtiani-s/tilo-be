@@ -1,4 +1,16 @@
+import { ObjectId } from "mongoose";
+import { Cart, CartDocument } from "../../../models/cartModel";
 import { ProductDocument } from "../../../models/productModel";
+
+interface ProductsInCart {
+    _id: ObjectId;
+    title: string;
+    featuredImage: string;
+    price: string;
+    priceWithDiscount: string;
+    discount: number | null;
+    quantity: number;
+}
 
 interface Tpage {
     page: number;
@@ -20,9 +32,9 @@ export default class Transform {
     }
     paginatedProducts(items: any) {
         const paginatedItems: Tpage = this.paginate(items);
-        let elements:any=[]
-        items.docs.map((item:any) => 
-            elements.push ({
+        let elements: any = [];
+        items.docs.map((item: any) =>
+            elements.push({
                 _id: item._id,
                 title: item.title,
                 numbersOfRate: item.numbersOfRate,
@@ -39,7 +51,7 @@ export default class Transform {
                 colors: item.colors,
                 tags: item.tags,
                 category: item.category,
-                categoryNames:item.categoryNames
+                categoryNames: item.categoryNames,
             })
         );
 
@@ -47,9 +59,9 @@ export default class Transform {
         return paginatedItems;
     }
     products(items: any) {
-        let elements:any=[]
-        items.map((item:any) => 
-            elements.push ({
+        let elements: any = [];
+        items.map((item: any) =>
+            elements.push({
                 _id: item._id,
                 title: item.title,
                 numbersOfRate: item.numbersOfRate,
@@ -66,9 +78,35 @@ export default class Transform {
                 colors: item.colors,
                 tags: item.tags,
                 category: item.category,
-                categoryNames:item.categoryNames
+                categoryNames: item.categoryNames,
             })
         );
         return elements;
+    }
+
+    cart(items: CartDocument) {
+        let productsInCart: ProductsInCart[] = [];
+        items?.products?.map((item: any) => {
+            let product = {
+                _id: item.productId._id,
+                title: item.productId.title,
+                featuredImage: item.productId.featuredImage,
+                price: item.productId.price,
+                priceWithDiscount: item.productId.priceWithDiscount,
+                discount: item.productId.discount,
+                quantity: item?.quantity,
+            };
+            productsInCart.push(product);
+        });
+        const cart = {
+            _id:items._id,
+            products: productsInCart,
+            cartSum: items.cartSum,
+            cartSumWithDiscount: items.cartSumWithDiscount,
+            createdAt: items.createdAt,
+            updatedAt: items.updatedAt,
+        };
+
+        return cart;
     }
 }
