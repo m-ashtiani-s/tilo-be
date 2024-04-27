@@ -1,7 +1,6 @@
 import { validationResult } from "express-validator";
 import Controller from "../../controller";
 import { Request, Response } from "express";
-// import { ObjectId } from "mongoose";
 import Transform from "../../../../transform/web/v1/transform";
 import { ObjectId } from "mongodb";
 
@@ -119,7 +118,6 @@ export default class AdminProductController extends Controller {
             query.priceWithDiscount = { $lte: maxPrice };
         }
 
-        //@ts-ignore
         this.model.productModel
             //@ts-ignore
             .paginate(query, paginationSetup)
