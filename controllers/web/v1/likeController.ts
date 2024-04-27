@@ -89,28 +89,5 @@ export default class LikeController extends Controller {
             data: new Transform().products(liked?.products),
             message: "successfully",
         });
-
-        
-
-
     }
-    // get(req: Request, res: Response) {
-    //     const errors = validationResult(req);
-    //     if (!errors.isEmpty()) {
-    //         return this.showValidationErrors(res as Response, errors);
-    //     }
-    // }
-
-    // delete(req: Request, res: Response) {
-    //     const errors = validationResult(req);
-    //     if (!errors.isEmpty()) {
-    //         return this.showValidationErrors(res as Response, errors);
-    //     }
-    // }
-    // edit(req: Request, res: Response) {
-    //     const errors = validationResult(req);
-    //     if (!errors.isEmpty()) {
-    //         return this.showValidationErrors(res as Response, errors);
-    //     }
-    // }
 }
