@@ -37,8 +37,8 @@ export default class CartController extends Controller {
                 quantity: req?.body.quantity,
             };
             cart.products.push(productInCart);
-            cart.cartSum = cart.cartSum + product?.price;
-            cart.cartSumWithDiscount = cart.cartSumWithDiscount + product?.priceWithDiscount;
+            cart.cartSum = cart.cartSum + product?.price * req.body.quantity;
+            cart.cartSumWithDiscount = cart.cartSumWithDiscount + product?.priceWithDiscount * req.body.quantity;
 
             cart.save();
             return res.status(200).json({
@@ -52,8 +52,59 @@ export default class CartController extends Controller {
             newCart[existingProduct].quantity = newCart[existingProduct]?.quantity + req.body.quantity;
             //@ts-ignore
             cart?.products = newCart;
-            cart.cartSum = cart.cartSum + product?.price;
-            cart.cartSumWithDiscount = cart.cartSumWithDiscount + product?.priceWithDiscount;
+            cart.cartSum = cart.cartSum + product?.price * req.body.quantity;
+            cart.cartSumWithDiscount = cart.cartSumWithDiscount + product?.priceWithDiscount * req.body.quantity;
+            cart.save();
+            return res.status(200).json({
+                fields: "cart",
+                success: true,
+                data: null,
+                message: "successfully added",
+            });
+        }
+    }
+    async editQuantity(req: Request, res: Response) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return this.showValidationErrors(res as Response, errors);
+        }
+        //@ts-ignore
+        const cart = await this.model.cartModel.findOne({ user: req.user._id });
+        if (!cart) {
+            return res.status(400).json({
+                fields: "cart",
+                success: false,
+                data: null,
+                message: "cart with this user not found",
+            });
+        }
+
+        const existingProduct = cart?.products?.findIndex((obj) => obj?.productId?.toString() == req.body.productId);
+        const product = await this.model.productModel.findById(req?.body.productId);
+        if (!product) {
+            return res.status(500).json({
+                fields: "product",
+                success: false,
+                data: null,
+                message: "product not found",
+            });
+        }
+
+        if (existingProduct === -1) {
+            return res.status(400).json({
+                fields: "cart",
+                success: true,
+                data: null,
+                message: "this product not existed in cart",
+            });
+        } else {
+            let newCart = [...cart?.products];
+            
+            //@ts-ignore
+            cart?.products = newCart;
+            cart.cartSum = cart.cartSum - newCart[existingProduct].quantity*product.price + product?.price * req.body.quantity;
+            cart.cartSumWithDiscount = cart.cartSumWithDiscount - newCart[existingProduct].quantity*product.priceWithDiscount + product?.priceWithDiscount * req.body.quantity;
+            newCart[existingProduct].quantity = req.body.quantity;
             cart.save();
             return res.status(200).json({
                 fields: "cart",
@@ -105,6 +156,15 @@ export default class CartController extends Controller {
                 message: "cart not found",
             });
         }
+        const product = await this.model.productModel.findById(req?.params.product);
+        if (!product) {
+            return res.status(500).json({
+                fields: "product",
+                success: false,
+                data: null,
+                message: "product not found",
+            });
+        }
 
         const productsInCart = [...cart.products];
         const existingProduct = productsInCart?.findIndex((obj) => obj?.productId?.toString() == req.params.product);
@@ -116,6 +176,8 @@ export default class CartController extends Controller {
                 message: "product not found in cart",
             });
         }
+        cart.cartSum = cart.cartSum - product?.price * cart.products[existingProduct]?.quantity;
+        cart.cartSumWithDiscount = cart.cartSumWithDiscount - product?.priceWithDiscount * cart.products[existingProduct]?.quantity;
         const filteredProducts = productsInCart.filter((product) => product.productId.toString() !== req.params.product);
         cart.products = filteredProducts;
         cart.save();

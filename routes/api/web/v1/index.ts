@@ -36,5 +36,6 @@ v1Router.get("/v1/liked-products",AuthHandler,  likeController.get.bind(likeCont
 v1Router.post("/v1/cart",AuthHandler,  cartController.create.bind(cartController));
 v1Router.get("/v1/cart",AuthHandler,  cartController.get.bind(cartController));
 v1Router.delete("/v1/cart/:cart/:product",AuthHandler, cartController.delete.bind(cartController));
+v1Router.post("/v1/cart-quantity",AuthHandler,  cartController.editQuantity.bind(cartController));
 
 export default v1Router;
