@@ -13,6 +13,7 @@ const AuthHandler = (req: Request, res: Response, next: any) => {
 					success: false,
 					data: null,
 					message: "Failed to authenticate token.",
+					code:401
 				});
 			}
 			if (!!decode) {
@@ -28,6 +29,7 @@ const AuthHandler = (req: Request, res: Response, next: any) => {
 								success: false,
 								data: null,
 								message: "User not found",
+								code:401
 							});
 						}
 					})
@@ -42,6 +44,7 @@ const AuthHandler = (req: Request, res: Response, next: any) => {
 		success: false,
 		data: null,
 		message: "you dont have permission for this route",
+		code:401
 	});
 };
 

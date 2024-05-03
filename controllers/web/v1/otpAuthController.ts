@@ -157,7 +157,7 @@ export default class OtpAuthController extends Controller {
                         }
 
                         const token = jwt.sign({ user_id: user._id }, process.env.SECRET_KEY, {
-                            expiresIn: "110h",
+                            expiresIn: "24h",
                         });
 
                         otp.deleteOne()
@@ -197,7 +197,7 @@ export default class OtpAuthController extends Controller {
                         }
 
                         const token = jwt.sign({ user_id: user._id }, process.env.SECRET_KEY, {
-                            expiresIn: "110h",
+                            expiresIn: "24h",
                         });
 
                         otp.deleteOne()

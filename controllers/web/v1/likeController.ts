@@ -72,6 +72,7 @@ export default class LikeController extends Controller {
             return this.showValidationErrors(res as Response, errors);
         }
 
+
         //@ts-ignore
         const liked=await this.model.likeModel.findOne({user:req.user._id}).populate('products').exec()
         if(!liked){
