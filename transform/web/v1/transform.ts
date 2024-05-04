@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
 import { Cart, CartDocument } from "../../../models/cartModel";
 import { ProductDocument } from "../../../models/productModel";
+import { OrderDocument } from "../../../models/orderModel";
 
 interface ProductsInCart {
     _id: ObjectId;
@@ -105,6 +106,32 @@ export default class Transform {
             cartSumWithDiscount: items.cartSumWithDiscount,
             createdAt: items.createdAt,
             updatedAt: items.updatedAt,
+        };
+
+        return cart;
+    }
+    order(items: OrderDocument) {
+        let productsInCart: ProductsInCart[] = [];
+        items?.products?.map((item: any) => {
+            let product = {
+                _id: item.productId._id,
+                title: item.productId.title,
+                featuredImage: item.productId.featuredImage,
+                price: item.productId.price,
+                priceWithDiscount: item.productId.priceWithDiscount,
+                discount: item.productId.discount,
+                quantity: item?.quantity,
+            };
+            productsInCart.push(product);
+        });
+        const cart = {
+            _id:items._id,
+            products: productsInCart,
+            orderSum: items.orderSum,
+            orderSumWithDiscount: items.orderSumWithDiscount,
+            createdAt: items.createdAt,
+            updatedAt: items.updatedAt,
+            paymentMethod: items.paymentMethod
         };
 
         return cart;

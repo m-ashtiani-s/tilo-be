@@ -177,7 +177,7 @@ export default class OtpAuthController extends Controller {
                 });
         } else {
             this.model.userModel
-                .findOne({ userName: req.body.otpPersonData })
+                .findOne({ userName: req.body.otpPersonData }) 
                 .then((user) => {
                     if (!user) {
                         return res.status(400).json({ data: [{ fields: "user", message: "userName not found!" }], success: false });

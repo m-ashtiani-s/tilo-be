@@ -2,6 +2,7 @@ import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import Controller from "../controller";
 import Transform from "../../../transform/web/v1/transform";
+import { Catrgory } from "../../../types/category";
 
 export default class ProductController extends Controller {
     getAll(req: Request, res: Response) {
@@ -20,6 +21,9 @@ export default class ProductController extends Controller {
 
         const query: any = {};
         rateFilter && (query.rate = rateFilter);
+        if (req.query.category) {
+            query.category = { $in: req.query.category };
+        }
 
         if (minPrice !== undefined && maxPrice !== undefined) {
             query.priceWithDiscount = { $gte: minPrice, $lte: maxPrice };
@@ -92,27 +96,14 @@ export default class ProductController extends Controller {
                 });
             });
     }
-    //TODO pagination format
-    getByCategory(req: Request, res: Response) {
+    getCategoryList(req: Request, res: Response) {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return this.showValidationErrors(res as Response, errors);
         }
 
-        const categoryId = req.params.id;
-        const page = req.query.page ? parseInt(req.query.page as string) : 1;
-        const limit = req.query.pageSize ? parseInt(req.query.pageSize as string) : 10;
-
         this.model.categoryModel
-            .findById(categoryId)
-            .populate({
-                path: "products",
-                options: {
-                    limit: limit,
-                    skip: (page - 1) * limit,
-                },
-            })
-            .exec()
+            .find()
             .then((category) => {
                 if (!category) {
                     return res.status(404).json({
@@ -122,11 +113,16 @@ export default class ProductController extends Controller {
                         message: "Category not found",
                     });
                 }
-                const products = category.products;
+                let categoryList:Catrgory[] =[] ;
+                category.map((cat)=>{
+                    const catItem={id:cat?._id,name:cat?.title}
+                    categoryList.push(catItem)
+                })
+
                 return res.json({
                     fields: "product",
-                    success: false,
-                    data: products,
+                    success: true,
+                    data: categoryList,
                     message: "successfully",
                 });
             })

@@ -40,8 +40,8 @@ export default {
         // check("maxPrice").isNumeric().withMessage("maxPrice must be numeric"),
     ],
     getProductsByCategory: [
-        check("page").isNumeric().withMessage("page must be numeric"),
-        check("pageSize").isNumeric().withMessage("pageSize must be numeric"),
+        // check("page").isNumeric().withMessage("page must be numeric"),
+        // check("pageSize").isNumeric().withMessage("pageSize must be numeric"),
     ],
     editProduct: [
         check("title").notEmpty().withMessage("tite is required"),

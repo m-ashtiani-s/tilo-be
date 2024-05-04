@@ -83,7 +83,6 @@ export default class AuthController extends Controller {
 	}
 
 	login(req: Request, res: Response) {
-		console.log(req)
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			return this.showValidationErrors(res, errors);

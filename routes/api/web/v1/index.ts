@@ -8,6 +8,7 @@ import AuthHandler from "../../../../middleware/authHandler";
 import AdminAuthHandler from "../../../../middleware/adminAuthHandler";
 import LikeController from "../../../../controllers/web/v1/likeController";
 import CartController from "../../../../controllers/web/v1/cartController";
+import OrderController from "../../../../controllers/web/v1/orderController";
 
 const v1Router = express.Router();
 
@@ -16,6 +17,7 @@ const otpAuthController = new OtpAuthController();
 const productController1 = new ProductController();
 const likeController= new LikeController()
 const cartController= new CartController()
+const orderController= new OrderController()
 
 v1Router.use("/v1/admin",AuthHandler,AdminAuthHandler, adminRouter);
 
@@ -28,7 +30,7 @@ v1Router.post("/v1/verify-with-otp", validations.verifyOtp, (otpAuthController a
 //products routs
 v1Router.get("/v1/products", validations.getAllProducts, productController1.getAll.bind(productController1));
 v1Router.get("/v1/products/:id", validations.getAllProducts, productController1.get.bind(productController1));
-v1Router.get("/v1/products/by-category/:id", validations.getProductsByCategory, productController1.getByCategory.bind(productController1));
+v1Router.get("/v1/categories", productController1.getCategoryList.bind(productController1));
 
 v1Router.post("/v1/like",AuthHandler,  likeController.create.bind(likeController));
 v1Router.get("/v1/liked-products",AuthHandler,  likeController.get.bind(likeController));
@@ -37,5 +39,8 @@ v1Router.post("/v1/cart",AuthHandler,  cartController.create.bind(cartController
 v1Router.get("/v1/cart",AuthHandler,  cartController.get.bind(cartController));
 v1Router.delete("/v1/cart/:cart/:product",AuthHandler, cartController.delete.bind(cartController));
 v1Router.post("/v1/cart-quantity",AuthHandler,  cartController.editQuantity.bind(cartController));
+
+v1Router.post("/v1/order",AuthHandler,  orderController.create.bind(orderController));
+v1Router.get("/v1/order/:id",AuthHandler,  orderController.get.bind(orderController));
 
 export default v1Router;
