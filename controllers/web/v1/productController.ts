@@ -24,6 +24,9 @@ export default class ProductController extends Controller {
         if (req.query.category) {
             query.category = { $in: req.query.category };
         }
+        if (req.query.title) {
+            query.title = { $regex: req.query.title, $options: 'i' }; // Use regex for similar title search
+        }
 
         if (minPrice !== undefined && maxPrice !== undefined) {
             query.priceWithDiscount = { $gte: minPrice, $lte: maxPrice };

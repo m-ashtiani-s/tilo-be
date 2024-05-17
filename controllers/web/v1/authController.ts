@@ -217,6 +217,7 @@ export default class AuthController extends Controller {
 				user_id: user._id,
 				email: user.email,
 				role: user.role,
+				name: user.name,
 			};
 			if (!process.env.SECRET_KEY) {
 				throw new Error("SECRET_KEY is not defined in environment variables.");
